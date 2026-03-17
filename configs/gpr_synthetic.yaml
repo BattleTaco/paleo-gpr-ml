@@ -1,0 +1,51 @@
+# GPR Synthetic Data Experiment Configuration
+
+experiment:
+  name: gpr_synthetic
+  seed: 42
+  output_dir: results/
+
+synthetic:
+  simulator: gprmax          # FDTD-based GPR simulator
+  num_samples: 5000
+  domain:
+    x_m: 2.0
+    z_m: 1.0
+    dx_m: 0.002
+    dz_m: 0.002
+  antenna:
+    centre_frequency_mhz: 250
+    separation_m: 0.1
+  objects:
+    - type: sphere
+      radius_range_m: [0.05, 0.20]
+    - type: cylinder
+      radius_range_m: [0.03, 0.15]
+  soil:
+    relative_permittivity_range: [4, 20]
+    conductivity_range_s_m: [0.001, 0.05]
+
+data:
+  processed_dir: data/processed/
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+model:
+  architecture: unet
+  in_channels: 1
+  base_features: 32
+  depth: 4
+  dropout: 0.2
+
+training:
+  epochs: 100
+  batch_size: 16
+  optimizer: adamw
+  lr: 5.0e-4
+  weight_decay: 1.0e-4
+  scheduler: onecycle
+
+evaluation:
+  metrics: [precision, recall, f1, iou]
+  threshold: 0.5

@@ -1,0 +1,42 @@
+# Fossil Image Classifier Configuration
+
+experiment:
+  name: fossil_classifier
+  seed: 42
+  output_dir: results/
+
+data:
+  raw_dir: data/raw/
+  processed_dir: data/processed/
+  image_size: [224, 224]
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  augmentation:
+    horizontal_flip: true
+    vertical_flip: false
+    rotation_degrees: 15
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+
+model:
+  backbone: resnet50
+  pretrained: true
+  num_classes: 10          # update when class list is finalised
+  freeze_backbone_epochs: 5
+  dropout: 0.4
+
+training:
+  epochs: 30
+  batch_size: 32
+  optimizer: adamw
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  scheduler: cosine
+  early_stopping_patience: 7
+
+evaluation:
+  metrics: [accuracy, precision, recall, f1, auc]
+  top_k: 3
