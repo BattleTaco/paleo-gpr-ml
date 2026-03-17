@@ -1,24 +1,116 @@
-# Project Roadmap
+# Full Research Roadmap
 
-## Phase 1 – Literature Review & Data Survey
-- [ ] Compile key GPR survey papers and paleontology prospecting case studies
-- [ ] Survey existing ML approaches for subsurface anomaly detection
-- [ ] Identify publicly available GPR datasets
+---
 
-## Phase 2 – Data Acquisition & Preprocessing
-- [ ] Collect or synthesise GPR B-scan data
-- [ ] Collect fossil / bone image datasets (e.g. surface photography, CT)
-- [ ] Implement preprocessing pipelines (`src/data/`)
+## Phase 1: Setup (DONE)
 
-## Phase 3 – Baseline Models
-- [ ] GPR anomaly detection baseline (classical + simple CNN)
-- [ ] Fossil image classification baseline (transfer learning)
+- repo creation
+- environment setup
+- structure
 
-## Phase 4 – Advanced Modelling
-- [ ] Investigate self-supervised / semi-supervised approaches
-- [ ] Explore domain-adaptation between synthetic and real GPR data
+---
 
-## Phase 5 – Evaluation & Write-up
-- [ ] Quantitative evaluation on held-out test sets
-- [ ] Visualisations and result tables
-- [ ] Draft research report / paper
+## Phase 2: Literature (1–2 weeks)
+
+### Tasks
+- read 5–10 core papers
+- build literature matrix
+- summarize each paper
+
+### Output
+- reading notes
+- research understanding
+
+---
+
+## Phase 3: Data Acquisition (1 week)
+
+### Tasks
+- download GPR dataset
+- explore format
+- catalog datasets
+
+### Output
+- dataset inventory
+- data folder populated
+
+---
+
+## Phase 4: Data Exploration (1 week)
+
+### Tasks
+- visualize radargrams
+- inspect labels
+- identify patterns
+
+### Output
+- notebook
+- figures
+
+---
+
+## Phase 5: Synthetic Data (2–3 weeks)
+
+### Tasks
+- learn gprMax
+- define target shapes
+- generate synthetic scans
+
+### Output
+- synthetic dataset
+- labels
+
+---
+
+## Phase 6: Baseline Model (2–3 weeks)
+
+### Tasks
+- choose model (YOLO)
+- train baseline
+- evaluate
+
+### Output
+- trained model
+- metrics
+
+---
+
+## Phase 7: Iteration (2–4 weeks)
+
+### Tasks
+- tune hyperparameters
+- try new architectures
+- improve dataset
+
+---
+
+## Phase 8: Downstream Fossil Work (optional)
+
+### Tasks
+- classification or segmentation
+- integrate pipeline
+
+---
+
+## Phase 9: Paper / Report
+
+### Tasks
+- write findings
+- include figures
+- evaluate contributions
+
+---
+
+## Timeline Summary
+
+Total: ~8–12 weeks for strong project
+
+---
+
+## Weekly Workflow
+
+Each week:
+- read
+- implement
+- test
+- document
