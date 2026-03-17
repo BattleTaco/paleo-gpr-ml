@@ -1,0 +1,40 @@
+# GPR Baseline Experiment Configuration
+
+experiment:
+  name: gpr_baseline
+  seed: 42
+  output_dir: results/
+
+data:
+  raw_dir: data/raw/
+  processed_dir: data/processed/
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+preprocessing:
+  time_zero_correction: true
+  dewow: true
+  bandpass_filter:
+    low_freq_mhz: 50
+    high_freq_mhz: 500
+  gain: agc
+  normalize: true
+
+model:
+  architecture: cnn_1d
+  input_channels: 1
+  hidden_channels: [32, 64, 128]
+  dropout: 0.3
+
+training:
+  epochs: 50
+  batch_size: 32
+  optimizer: adam
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler: cosine
+
+evaluation:
+  metrics: [precision, recall, f1, iou]
+  threshold: 0.5
