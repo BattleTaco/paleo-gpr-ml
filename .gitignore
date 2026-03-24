@@ -51,6 +51,10 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Assistants
+CLAUDE.md
+voice_guide.md
+
 # Translations
 *.mo
 *.pot

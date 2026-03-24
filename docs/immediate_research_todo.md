@@ -606,54 +606,64 @@ I should not rush into modeling.
 ## Do these first, in order
 
 ### Right now
-- [ ] Confirm dataset path under `data/raw/gpr/`
-- [ ] Create `docs/data_understanding.md`
-- [ ] Create `docs/research_log.md`
-- [ ] Create `notebooks/01_gpr_data_exploration.ipynb`
+- [x] Confirm dataset path under `data/raw/GPR_data/`
+- [x] Create `docs/data_understanding.md`
+- [x] Create `docs/research_log.md`
+- [x] Create `notebooks/01_gpr_data_exploration.ipynb`
 
 ### First notebook session
-- [ ] Inspect directory structure
-- [ ] Identify file types
-- [ ] Load sample files
-- [ ] Visualize at least 20 samples
-- [ ] Check labels
-- [ ] Count classes/samples
-- [ ] Save example figures
+- [x] Inspect directory structure
+- [x] Identify file types
+- [x] Load sample files
+- [x] Visualize at least 20 samples (25+ figures generated)
+- [x] Check labels (YOLO + VOC annotations parsed and validated)
+- [x] Count classes/samples (2,524 total, 285 unique originals)
+- [x] Save example figures (16 figures in `results/figures/`)
 
 ### First documentation session
-- [ ] Write initial `data_understanding.md`
-- [ ] Add first entry to `research_log.md`
-- [ ] Update literature matrix with downloaded papers
+- [x] Write initial `data_understanding.md`
+- [x] Add first entry to `research_log.md` (3 dated entries now)
+- [x] Update literature matrix with downloaded papers
 
 ### First reading session
-- [ ] Read AI in Paleontology review
-- [ ] Read vertebrate skeleton GPR paper
-- [ ] Create reading notes for both
-- [ ] Write how each connects to my dataset and project
+- [x] Read AI in Paleontology review
+- [x] Read vertebrate skeleton GPR paper
+- [x] Read all 6 papers and create reading notes for each (`papers/reading_notes/`)
+- [x] Write how each connects to dataset and project (literature synthesis in `docs/notes/03_literature_synthesis.md`)
 
 ### After that
-- [ ] Decide the first learning task type
-- [ ] Draft `docs/experiment_01_baseline.md`
-- [ ] Draft `docs/synthetic_data_plan.md`
+- [x] Decide the first learning task type (3-class classification, then detection)
+- [x] Draft `docs/experiment_01_baseline.md` (complete, experiment run, 99.5% accuracy)
+- [x] Draft `docs/synthetic_data_plan.md` (complete with gprMax parameters from literature)
+
+### Phase 2 work (in progress)
+- [x] Run baseline classification experiment (`notebooks/02_baseline_classification.ipynb`)
+- [x] Write experiment notes (`docs/notes/02_baseline_experiment_notes.md`)
+- [ ] Run Grad-CAM analysis (`notebooks/03_gradcam_analysis.ipynb` - created, needs execution)
+- [ ] Write Grad-CAM notes (`docs/notes/04_gradcam_notes.md` - template created)
+- [x] Write detection experiment spec (`docs/experiment_02_detection.md`)
+- [ ] Prepare detection data (`src/data/prepare_detection_data.py` - created, needs execution)
+- [ ] Run object detection experiment
+- [ ] Begin synthetic data generation with gprMax
 
 ---
 
 # Definition of “done” for this stage
 
 This stage is complete when I have:
-- a clear understanding of the first GPR dataset
-- a completed exploration notebook
-- a written data understanding document
-- at least 5 paper notes
-- an updated literature matrix
-- a research log with decisions and questions
-- a draft baseline experiment plan
-- a first synthetic data plan draft
+- [x] a clear understanding of the first GPR dataset
+- [x] a completed exploration notebook
+- [x] a written data understanding document
+- [x] at least 5 paper notes (6 completed)
+- [x] an updated literature matrix (with gap analysis)
+- [x] a research log with decisions and questions (3 entries + lit questions)
+- [x] a draft baseline experiment plan (and the experiment is done)
+- [x] a first synthetic data plan draft
 
-At that point, I am ready to move into:
-- preprocessing
-- baseline modeling
-- synthetic fossil-target generation
+**STATUS: This stage is COMPLETE.** Moving into Phase 2:
+- Grad-CAM analysis (notebook created, ready to run)
+- Object detection experiment (spec written, data prep script created)
+- Synthetic fossil-target generation (plan written, gprMax parameters sourced from literature)
 
 ---
 
