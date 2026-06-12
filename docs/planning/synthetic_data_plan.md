@@ -8,7 +8,7 @@
 
 ## Motivation
 
-Real GPR data with labeled fossil targets essentially doesn't exist. Our infrastructure dataset has cavities and utilities, not fossils. To test whether ML can detect fossil-like anomalies in GPR data, we need synthetic data that simulates what a buried fossil would look like to a GPR antenna.
+Real GPR data with labeled fossil targets essentially doesn't exist. My infrastructure dataset has cavities and utilities, not fossils. To test whether ML can detect fossil-like anomalies in GPR data, I need synthetic data that simulates what a buried fossil would look like to a GPR antenna.
 
 The literature validates this approach. Multiple GPR ML papers use gprMax synthetic data to supplement real training data (Green et al. for graves, Ali et al. for geometric shapes, others cited in Kücükdemirci & Sarris 2022).
 
@@ -98,7 +98,7 @@ To avoid the model learning a single background pattern:
 - Plus ~100 "background only" (no target) B-scans
 - Total: ~475 synthetic B-scans
 
-This is modest but matches what others have done. Green et al. used ~1000 images total (real + synthetic). We'll have ~475 synthetic + 2239 real infrastructure images.
+This is modest but matches what others have done. Green et al. used ~1000 images total (real + synthetic). I'll have ~475 synthetic + 2239 real infrastructure images.
 
 ## Validation checks
 
@@ -115,7 +115,7 @@ Before using synthetic data for training:
 **Phase 1: Infrastructure-only baseline**
 - Train YOLO on real cavity/utility data
 - Evaluate on held-out test set
-- This is our detection baseline (Experiment 02)
+- This is my detection baseline (Experiment 02)
 
 **Phase 2: Synthetic pretraining**
 - Pretrain YOLO on synthetic data (all target types including fossil-like)
@@ -129,15 +129,15 @@ Before using synthetic data for training:
 - Can it detect fossil-like targets it was pretrained on but never saw during fine-tuning?
 
 **Phase 4 (aspirational): Real paleontological GPR data**
-- If we can get any real GPR data from a paleontological site, test the model
-- This is the ultimate validation but requires external data we don't have yet
+- If I can get any real GPR data from a paleontological site, test the model
+- This is the ultimate validation but requires external data I don't have yet
 
 ## Dependencies and timeline
 
 - **gprMax installation**: Need to install and test locally. FDTD simulations can be compute-heavy.
 - **Model design**: Script to generate gprMax input files programmatically (parameterized by target type, depth, host medium)
-- **Post-processing**: Convert gprMax output to B-scan images in the same format as our real data
-- **Integration**: Add synthetic data to our data pipeline alongside real data
+- **Post-processing**: Convert gprMax output to B-scan images in the same format as my real data
+- **Integration**: Add synthetic data to my data pipeline alongside real data
 
 This should start after the Grad-CAM analysis and detection baseline are done, since those inform what patterns the model actually learns and how hard detection is on real data.
 

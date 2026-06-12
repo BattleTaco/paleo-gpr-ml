@@ -4,7 +4,7 @@
 
 Save this file as:
 
-`docs/immediate_research_todo.md`
+`docs/planning/immediate_research_todo.md`
 
 This is the right place because it is not code, not a paper note, and not a long-term roadmap. It is your **active execution checklist** for the next stage of the project.
 
@@ -100,15 +100,15 @@ Put the extracted dataset inside a clean folder such as:
 - Are filenames clean and understandable?
 
 ### Deliverable
-A short note in `docs/data_understanding.md` describing the directory structure.
+A short note in `docs/reference/data_understanding.md` describing the directory structure.
 
 ---
 
 ## Task 1.2: Create or verify these working files
 
 ### Files to create or confirm
-- `docs/immediate_research_todo.md`
-- `docs/data_understanding.md`
+- `docs/planning/immediate_research_todo.md`
+- `docs/reference/data_understanding.md`
 - `docs/research_log.md`
 - `notebooks/01_gpr_data_exploration.ipynb`
 
@@ -193,7 +193,7 @@ For every paper, add:
 - relevance to my project
 
 ### Deliverable
-`docs/literature_matrix.md` stays updated as the central source of truth.
+`docs/reference/literature_matrix.md` stays updated as the central source of truth.
 
 ---
 
@@ -260,7 +260,7 @@ Understand exactly what data format I am working with.
 - Is there a README or description file included?
 
 ### Deliverable
-A section in the notebook and in `docs/data_understanding.md` describing file formats.
+A section in the notebook and in `docs/reference/data_understanding.md` describing file formats.
 
 ---
 
@@ -309,7 +309,7 @@ Buried objects in radargrams often appear as hyperbolic signatures rather than l
 - Are some classes easier to recognize than others?
 
 ### Deliverable
-A short written section in `docs/data_understanding.md` called:
+A short written section in `docs/reference/data_understanding.md` called:
 
 `Visual patterns and likely anomaly signatures`
 
@@ -334,7 +334,7 @@ This directly determines what model family I should use first:
 - masks → segmentation
 
 ### Deliverable
-A section in `docs/data_understanding.md` titled:
+A section in `docs/reference/data_understanding.md` titled:
 
 `Label structure and implications for modeling`
 
@@ -377,7 +377,7 @@ Catch problems early.
 - padding/cropping inconsistencies
 
 ### Deliverable
-A section in `docs/data_understanding.md` called:
+A section in `docs/reference/data_understanding.md` called:
 
 `Data quality issues and risks`
 
@@ -385,7 +385,7 @@ A section in `docs/data_understanding.md` called:
 
 # PHASE 4: Turn observations into structured understanding
 
-## Task 4.1: Write `docs/data_understanding.md`
+## Task 4.1: Write `docs/reference/data_understanding.md`
 
 ### Goal
 Convert notebook observations into clear documentation.
@@ -405,7 +405,7 @@ Convert notebook observations into clear documentation.
 12. Open questions
 
 ### Deliverable
-A complete first version of `docs/data_understanding.md`
+A complete first version of `docs/reference/data_understanding.md`
 
 ---
 
@@ -482,7 +482,7 @@ A growing list of concrete implementation ideas.
 ### Goal
 Avoid vague project language.
 
-Inside `docs/synthetic_data_plan.md`, define:
+Inside `docs/planning/synthetic_data_plan.md`, define:
 - what counts as bone-like geometry
 - what counts as rib-like geometry
 - what counts as fossil fragments
@@ -498,7 +498,7 @@ Inside `docs/synthetic_data_plan.md`, define:
 - void/cavity
 
 ### Deliverable
-A first draft of `docs/synthetic_data_plan.md`
+A first draft of `docs/planning/synthetic_data_plan.md`
 
 ---
 
@@ -518,7 +518,7 @@ Prepare for gprMax or any synthetic generation tool later.
 - number of objects in scene
 
 ### Deliverable
-Simulation variable table in `docs/synthetic_data_plan.md`
+Simulation variable table in `docs/planning/synthetic_data_plan.md`
 
 ---
 
@@ -541,14 +541,14 @@ This depends on the labels, but after inspection:
 - if masks exist → segmentation is possible
 
 ### Deliverable
-A short decision note in `docs/experiment_01_baseline.md`
+A short decision note in `docs/experiments/experiment_01_baseline.md`
 
 ---
 
 ## Task 7.2: Write the baseline experiment spec
 
 ### File
-`docs/experiment_01_baseline.md`
+`docs/experiments/experiment_01_baseline.md`
 
 ### Include
 - objective
@@ -607,7 +607,7 @@ I should not rush into modeling.
 
 ### Right now
 - [x] Confirm dataset path under `data/raw/GPR_data/`
-- [x] Create `docs/data_understanding.md`
+- [x] Create `docs/reference/data_understanding.md`
 - [x] Create `docs/research_log.md`
 - [x] Create `notebooks/01_gpr_data_exploration.ipynb`
 
@@ -633,15 +633,15 @@ I should not rush into modeling.
 
 ### After that
 - [x] Decide the first learning task type (3-class classification, then detection)
-- [x] Draft `docs/experiment_01_baseline.md` (complete, experiment run, 99.5% accuracy)
-- [x] Draft `docs/synthetic_data_plan.md` (complete with gprMax parameters from literature)
+- [x] Draft `docs/experiments/experiment_01_baseline.md` (complete, experiment run, 99.5% accuracy)
+- [x] Draft `docs/planning/synthetic_data_plan.md` (complete with gprMax parameters from literature)
 
 ### Phase 2 work (in progress)
 - [x] Run baseline classification experiment (`notebooks/02_baseline_classification.ipynb`)
 - [x] Write experiment notes (`docs/notes/02_baseline_experiment_notes.md`)
 - [ ] Run Grad-CAM analysis (`notebooks/03_gradcam_analysis.ipynb` - created, needs execution)
 - [ ] Write Grad-CAM notes (`docs/notes/04_gradcam_notes.md` - template created)
-- [x] Write detection experiment spec (`docs/experiment_02_detection.md`)
+- [x] Write detection experiment spec (`docs/experiments/experiment_02_detection.md`)
 - [ ] Prepare detection data (`src/data/prepare_detection_data.py` - created, needs execution)
 - [ ] Run object detection experiment
 - [ ] Begin synthetic data generation with gprMax

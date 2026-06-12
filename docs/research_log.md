@@ -21,7 +21,7 @@ Chronological record of research progress, decisions, and open questions for the
 - The effective dataset is ~285 unique scenes. The 2,239 augmented images are mild transforms. This is much smaller than it looks on the surface.
 - Classes are separable even with basic statistics (mean intensity, edge density, etc.). A CNN should have plenty to work with.
 - Original images are a mess: variable sizes, RGB, no annotations. The augmented set is the practical training data.
-- There's a real data leakage risk. Must split by original image ID, not by individual image. If augmented copies of the same scene end up in both train and val, we'll get inflated metrics that mean nothing.
+- There's a real data leakage risk. Must split by original image ID, not by individual image. If augmented copies of the same scene end up in both train and val, I'll get inflated metrics that mean nothing.
 - Spatial bias exists in bbox placement. The model could potentially cheat by learning location instead of pattern.
 - Depth profiles are genuinely different between classes. The vertical structure of B-scans carries class-discriminative information, which makes sense physically. Cavities, utilities, and intact subsurface all interact differently with the radar pulse at different depths.
 
@@ -76,7 +76,7 @@ Chronological record of research progress, decisions, and open questions for the
 ### 3 things I learned
 1. Pre-augmented datasets with distinct classes can make classification trivially easy, even with honest splits
 2. Simple architectures are surprisingly strong when signal-to-noise ratio is high
-3. The EDA predicted this outcome. The RF sanity check and feature separability analysis basically told us the classes are well-separated
+3. The EDA predicted this outcome. The RF sanity check and feature separability analysis basically told me the classes are well-separated
 
 ### 2 things I still don't understand
 1. Why the intact class has 482 unique IDs when there are only 75 originals. Naming convention mismatch?
@@ -123,25 +123,25 @@ Grad-CAM on the trained ResNet18 to see what spatial regions drive predictions
 ### What I did
 
 - Read all 6 papers in `papers/references/` and wrote detailed reading notes for each in `papers/reading_notes/`
-- Built out the literature matrix in `docs/literature_matrix.md` with gap analysis
+- Built out the literature matrix in `docs/reference/literature_matrix.md` with gap analysis
 - Papers covered: AI in Paleontology (review), GPR Vertebrate Skeleton Detection (Ica Desert whale), GPR Dinosaur Bones Sicily (theropod in cave), GPR AI Review (archaeological prospection), Fossil CT Segmentation (protoceratopsian skulls), Fossil CT Acceleration (minimal annotation workflow)
 
 ### What I learned
 
-- **The intersection of ML + GPR + fossils is genuinely empty.** Archaeological GPR detection with ML exists. Fossil detection with GPR exists (physics-based). Nobody has combined ML + GPR for fossil detection. This is the gap we're filling.
+- **The intersection of ML + GPR + fossils is genuinely empty.** Archaeological GPR detection with ML exists. Fossil detection with GPR exists (physics-based). Nobody has combined ML + GPR for fossil detection. This is the gap I'm filling.
 - **Fossilized bone produces a positive-negative-positive polarity triplet** in GPR traces (Peredo et al.). Permittivity of mineralized bone is ~7-12 vs. ~3-5 for dry sediment. This contrast is detectable.
-- **Hyperbolic signatures from bones look similar to utility hyperbolas.** The Sicily paper shows dinosaur bones producing diffraction hyperbolas that are geometrically similar to what pipes produce. This means our infrastructure GPR model might partially transfer.
-- **gprMax synthetic data is standard practice** in GPR ML research. Multiple groups use it to supplement scarce real data. This validates our planned synthetic data pipeline.
+- **Hyperbolic signatures from bones look similar to utility hyperbolas.** The Sicily paper shows dinosaur bones producing diffraction hyperbolas that are geometrically similar to what pipes produce. This means my infrastructure GPR model might partially transfer.
+- **gprMax synthetic data is standard practice** in GPR ML research. Multiple groups use it to supplement scarce real data. This validates my planned synthetic data pipeline.
 - **Minimal annotations can work** if the architecture and augmentation are right. Knutsen achieved 0.96 Dice with only 18 annotated CT slices using UNet + EfficientNet-V2 + heavy augmentation.
-- **Generalization across targets is hard.** Yu et al.'s CT model trained on protoceratopsian skulls completely failed on other dinosaur genera. We should expect similar brittleness and plan domain adaptation.
+- **Generalization across targets is hard.** Yu et al.'s CT model trained on protoceratopsian skulls completely failed on other dinosaur genera. I should expect similar brittleness and plan domain adaptation.
 
 ### Decisions made
 
-- Our research contribution is clear: first ML-based fossil detection from GPR data, bridging infrastructure GPR training data to paleontological targets via synthetic data.
+- My research contribution is clear: first ML-based fossil detection from GPR data, bridging infrastructure GPR training data to paleontological targets via synthetic data.
 - Should compare YOLO with Faster R-CNN for detection (both used in GPR literature).
 - Synthetic data pipeline with gprMax should use dielectric values from Peredo et al. and reproduce the polarity triplet signature.
 - Include Hilbert transform / instantaneous amplitude as an input feature (already implemented, validated by Sicily paper).
-- Use Dice and IoU for evaluation if we do segmentation, not pixel accuracy.
+- Use Dice and IoU for evaluation if I do segmentation, not pixel accuracy.
 - Consider iterative annotation workflow from Knutsen for scaling up GPR annotations.
 
 ### What to do next
@@ -161,7 +161,7 @@ Grad-CAM on the trained ResNet18 to see what spatial regions drive predictions
 - ~~How much preprocessing is standard in GPR ML papers?~~ **Answered**: Migration (Kirchhoff), Hilbert transform, gain correction. Varies by study.
 - ~~Do most papers use raw radargrams or processed radargrams?~~ **Answered**: Both. Some detect on raw B-scans, others on migrated. No consensus.
 - Would a binary anomaly framing work better than 3-class for the initial task? *Still open.*
-- How should we handle the domain gap between synthetic and real data when we get there? *Still open, but fine-tuning on real data after synthetic pretraining is the common approach.*
+- How should I handle the domain gap between synthetic and real data when I get there? *Still open, but fine-tuning on real data after synthetic pretraining is the common approach.*
 
 ---
 

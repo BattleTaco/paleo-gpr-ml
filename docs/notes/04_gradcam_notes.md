@@ -50,11 +50,11 @@ Grad-CAM reveals where in the image the model focuses when making each predictio
 
 ### Findings
 
-**Cavities: the model genuinely attends to the anomaly region.** Attention-in-bbox of 0.51 and bbox-covered of 0.88 means the model's focus overlaps substantially with the annotated cavity locations. The high bbox coverage (88%) tells us the model sees most of the anomaly, not just a sliver. About half of the high-attention area falls inside the bbox, with the rest likely on surrounding context (which could be informative for classification anyway).
+**Cavities: the model genuinely attends to the anomaly region.** Attention-in-bbox of 0.51 and bbox-covered of 0.88 means the model's focus overlaps substantially with the annotated cavity locations. The high bbox coverage (88%) tells me the model sees most of the anomaly, not just a sliver. About half of the high-attention area falls inside the bbox, with the rest likely on surrounding context (which could be informative for classification anyway).
 
-**Utilities: the model looks elsewhere.** Attention-in-bbox of only 0.185 means the model's focus is mostly *not* on the annotated utility bounding boxes. Bbox coverage is low too (28%). This is surprising for a model with 99.5% accuracy. The model is correctly classifying utilities but appears to use features *outside* the annotated region -- possibly the broader hyperbolic tails, the overall texture pattern, or the background characteristics that differ between utility and non-utility images.
+**Utilities: the model looks elsewhere.** Attention-in-bbox of only 0.185 means the model's focus is mostly *not* on the annotated utility bounding boxes. Bbox coverage is low too (28%). This is surprising for a model with 99.5% accuracy. The model is correctly classifying utilities but appears to use features *outside* the annotated region, possibly the broader hyperbolic tails, the overall texture pattern, or the background characteristics that differ between utility and non-utility images.
 
-**This is not necessarily bad, but it's worth understanding.** For classification, using context beyond the bounding box can be effective. But for detection (where we need to localize), a model that doesn't focus on the actual target is concerning. It means the classification model's features may not directly transfer to detection.
+**This is not necessarily bad, but it's worth understanding.** For classification, using context beyond the bounding box can be effective. But for detection (where I need to localize), a model that doesn't focus on the actual target is concerning. It means the classification model's features may not directly transfer to detection.
 
 ### Interpretation
 
@@ -67,7 +67,7 @@ The utility result is consistent with the model doing "whole-image texture class
 
 ### Implications for detection experiment
 
-1. **Detection models need to learn localization explicitly.** We can't just threshold Grad-CAM to get detections, at least not for utilities. A real detection model (YOLO, Faster R-CNN) with box regression is necessary.
+1. **Detection models need to learn localization explicitly.** I can't just threshold Grad-CAM to get detections, at least not for utilities. A real detection model (YOLO, Faster R-CNN) with box regression is necessary.
 
 2. **Cavity detection should be easier than utility detection.** The classification model already attends to the right region for cavities. For utilities, the detection model needs to learn to focus on the hyperbola apex, not just the diffuse pattern.
 
@@ -79,6 +79,6 @@ The utility result is consistent with the model doing "whole-image texture class
 
 ## Connection to literature
 
-The Vertebrate Skeleton Detection paper (Peredo et al.) found that bone signatures appear at specific depth ranges determined by the burial depth and permittivity contrast. If our model's attention depth profile matches the known anomaly depth distribution in our dataset, that's consistent with the model learning real physics.
+The Vertebrate Skeleton Detection paper (Peredo et al.) found that bone signatures appear at specific depth ranges determined by the burial depth and permittivity contrast. If my model's attention depth profile matches the known anomaly depth distribution in my dataset, that's consistent with the model learning real physics.
 
-The GPR AI Review (Kücükdemirci & Sarris) noted that most GPR ML studies don't validate *what* the model learns. This Grad-CAM analysis puts us ahead of most published work in terms of interpretability.
+The GPR AI Review (Kücükdemirci & Sarris) noted that most GPR ML studies don't validate *what* the model learns. This Grad-CAM analysis puts me ahead of most published work in terms of interpretability.

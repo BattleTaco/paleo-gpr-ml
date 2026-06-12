@@ -1,0 +1,43 @@
+# Controlled synthetic GPR generation for the H1 transfer experiment.
+#
+# This drives src/data/generate_gprmax_models.py. The design principle (see
+# docs/experiments/experiment_03_transfer.md C0-C2 and docs/notes/09_research_hypothesis.md) is to hold
+# scene geometry, depth, host medium, and target geometry constant across target types, and
+# vary only the target dielectric. That is what lets us read the result causally.
+#
+# For every (host, depth, freq, x_center) cell we emit the same scene four times, once per
+# target type, sharing a scene_id so they pair exactly:
+#   void      eps = 1            (air-filled, low eps, positive top polarity, matches real cavities)
+#   bone      eps = bone_eps     (fossil-like, high eps, negative top polarity)
+#   anti_bone eps computed        (low eps, |reflection| matched to bone, positive polarity, H1b control)
+#   null      eps = host          (no contrast, negative control, should be ~undetectable)
+
+experiment:
+  name: synthetic_controlled
+  seed: 42
+
+domain:
+  air_gap_m: 0.04        # air layer above the ground surface (antenna sits here)
+  ground_depth_m: 0.30   # modeled ground thickness below the surface
+  width_m: 0.50          # survey-line width (x)
+  dx_m: 0.002            # spatial step (2 mm) -> resolves up to ~GHz features
+
+antenna:
+  separation_m: 0.04     # tx-rx offset
+  trace_step_m: 0.004    # src/rx move this far per B-scan trace
+  time_window_ns: 12.0   # record length
+
+target:
+  bone_eps: 9.0          # mid of Peredo's 7-12 range
+  void_eps: 1.0
+  radius_m: 0.05         # 10 cm diameter idealized cross-section (cylinder)
+  host_sigma_s_m: 0.005  # mild ground loss; same for all target types
+  target_sigma_s_m: 0.0  # keep target lossless so eps is the ONLY variable
+
+grid:
+  hosts:                 # name: relative permittivity
+    dry_sand: 4.0
+    limestone: 6.0
+  depths_m: [0.10, 0.20]
+  freqs_mhz: [400, 800]
+  x_center_m: 0.25       # target horizontal position (centered)

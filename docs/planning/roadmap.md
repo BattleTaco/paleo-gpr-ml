@@ -10,10 +10,10 @@
 
 ---
 
-## Phase 2: Literature (1–2 weeks)
+## Phase 2: Literature (1-2 weeks)
 
 ### Tasks
-- read 5–10 core papers
+- read 5-10 core papers
 - build literature matrix
 - summarize each paper
 
@@ -49,7 +49,7 @@
 
 ---
 
-## Phase 5: Synthetic Data (2–3 weeks)
+## Phase 5: Synthetic Data (2-3 weeks)
 
 ### Tasks
 - learn gprMax
@@ -62,7 +62,7 @@
 
 ---
 
-## Phase 6: Baseline Model (2–3 weeks)
+## Phase 6: Baseline Model (2-3 weeks)
 
 ### Tasks
 - choose model (YOLO)
@@ -75,7 +75,7 @@
 
 ---
 
-## Phase 7: Iteration (2–4 weeks)
+## Phase 7: Iteration (2-4 weeks)
 
 ### Tasks
 - tune hyperparameters
@@ -103,7 +103,7 @@
 
 ## Timeline Summary
 
-Total: ~8–12 weeks for strong project
+Total: ~8-12 weeks for strong project
 
 ---
 

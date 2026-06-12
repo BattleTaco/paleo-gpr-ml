@@ -1,3 +1,7 @@
+# Exact pip freeze from the CUDA training box (Linux, cu128 nightly torch). This is a snapshot
+# for reference. Nightly version pins (e.g. torch 2.12.0.devYYYYMMDD+cu128) expire and may not
+# be downloadable later. To set up the RTX 5090 / Blackwell machine, prefer requirements-cuda.txt
+# which installs the LATEST nightly cu128 torch. This file is the record of what once worked.
 absl-py==2.4.0
 albucore==0.0.24
 albumentations==2.0.8

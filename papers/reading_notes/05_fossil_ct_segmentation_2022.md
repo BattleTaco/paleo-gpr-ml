@@ -30,21 +30,21 @@ Applies U-Net and modified DeepLab v3+ to segment dinosaur fossils from CT scans
 
 **Generalization test**: Trained model was applied to non-protoceratopsian fossils (Haya, Pinacosaurus) from the same Gobi Desert environment. Results were "extremely poorly segmented." The model does not generalize across taxa.
 
-## What matters for our project
+## What matters for my project
 
-**The generalization failure is the headline result.** A model trained on 3 protoceratopsian skulls cannot segment different dinosaur genera. This is directly analogous to our concern about whether a model trained on infrastructure GPR data will detect fossil-like anomalies.
+**The generalization failure is the headline result.** A model trained on 3 protoceratopsian skulls cannot segment different dinosaur genera. This is directly analogous to my concern about whether a model trained on infrastructure GPR data will detect fossil-like anomalies.
 
-**Dice and IoU are the right metrics for segmentation.** Not accuracy (which is inflated by background pixels). If we move to segmentation for GPR anomaly detection, these are what we should report.
+**Dice and IoU are the right metrics for segmentation.** Not accuracy (which is inflated by background pixels). If I move to segmentation for GPR anomaly detection, these are what I should report.
 
 **Skip connections matter a lot.** Going from 1 to 2 skip connections jumped Dice from 0.738 to 0.894. The coarse-to-fine feature propagation is critical when targets have complex boundaries.
 
-**Small dataset, reasonable results.** ~8000 annotated slices from 3 specimens produced a model with 0.89 Dice on same-taxon data. This suggests that with even modest amounts of real GPR data labeled for anomaly regions, we could get reasonable segmentation performance.
+**Small dataset, reasonable results.** ~8000 annotated slices from 3 specimens produced a model with 0.89 Dice on same-taxon data. This suggests that with even modest amounts of real GPR data labeled for anomaly regions, I could get reasonable segmentation performance.
 
 ## What I want to steal
 
 - The evaluation framework: Dice + IoU, not accuracy. Visualize predictions overlaid on ground truth.
-- The finding that generalization across targets is hard even within a single domain (CT fossils). We should expect the same for GPR and plan accordingly.
-- DeepLab v3+ with skip connections as a candidate architecture if we move to segmentation.
+- The finding that generalization across targets is hard even within a single domain (CT fossils). I should expect the same for GPR and plan accordingly.
+- DeepLab v3+ with skip connections as a candidate architecture if I move to segmentation.
 
 ## Limitations
 
@@ -53,9 +53,9 @@ Applies U-Net and modified DeepLab v3+ to segment dinosaur fossils from CT scans
 - No domain adaptation or transfer learning from other imaging domains attempted.
 - The generalization failure wasn't analyzed in depth. Why does it fail? Different bone density? Different morphology? Different surrounding matrix?
 
-## Relevance to our project: MODERATE-HIGH
+## Relevance to my project: MODERATE-HIGH
 
-Not directly GPR-related, but the segmentation methodology and generalization analysis are relevant. The lesson that DL models in paleontology are brittle to domain shift is one we need to internalize for our GPR work.
+Not directly GPR-related, but the segmentation methodology and generalization analysis are relevant. The lesson that DL models in paleontology are brittle to domain shift is one I need to internalize for my GPR work.
 
 ## 3-2-1
 

@@ -18,7 +18,7 @@ Uses GPR to detect a buried whale skeleton at the Ica Desert paleontological sit
 - Dry sand/sediment: permittivity ~3-5
 - The contrast between bone and sediment produces a detectable reflection
 
-**The polarity triplet signature**: This is the most useful finding for our project. When a GPR pulse hits a buried bone, the reflected trace shows a characteristic positive-negative-positive polarity pattern. This is because:
+**The polarity triplet signature**: This is the most useful finding for my project. When a GPR pulse hits a buried bone, the reflected trace shows a characteristic positive-negative-positive polarity pattern. This is because:
 1. The bone has higher permittivity than the surrounding sand
 2. The pulse reflects off the top surface (positive)
 3. Then off the internal structure or bottom surface (negative, phase-reversed)
@@ -32,10 +32,10 @@ They use this triplet as a diagnostic signature to distinguish bone from other b
 
 ## What I want to steal from this paper
 
-- **The polarity triplet idea.** If we're generating synthetic GPR data for fossil targets, the synthetic traces should reproduce this positive-negative-positive pattern. This gives us a physics-based constraint for synthetic data generation.
-- **Dielectric property values for bone.** We need realistic permittivity values for mineralized bone in different sediment matrices. This paper provides actual numbers.
-- **The trace-level analysis approach.** Before jumping to image-level CNN detection, we should understand what the raw trace signatures look like. This could inform feature engineering or at least help us validate that our model is learning real physics.
-- **Forward modeling as a sanity check.** Even if we use data-driven detection, we should model what we expect to see before looking at real data.
+- **The polarity triplet idea.** If I'm generating synthetic GPR data for fossil targets, the synthetic traces should reproduce this positive-negative-positive pattern. This gives me a physics-based constraint for synthetic data generation.
+- **Dielectric property values for bone.** I need realistic permittivity values for mineralized bone in different sediment matrices. This paper provides actual numbers.
+- **The trace-level analysis approach.** Before jumping to image-level CNN detection, I should understand what the raw trace signatures look like. This could inform feature engineering or at least help me validate that my model is learning real physics.
+- **Forward modeling as a sanity check.** Even if I use data-driven detection, I should model what I expect to see before looking at real data.
 
 ## Limitations
 
@@ -44,9 +44,9 @@ They use this triplet as a diagnostic signature to distinguish bone from other b
 - 400 MHz antenna may not be optimal for all fossil sizes. Smaller targets need higher frequencies.
 - Fossilized whale bone has different material properties than, say, a dinosaur tooth or a small reptile skeleton. The permittivity values are specific to this specimen.
 
-## Relevance to our project: VERY HIGH
+## Relevance to my project: VERY HIGH
 
-This is the closest published work to what we want to do. The physics they describe is exactly what our ML model needs to learn from synthetic data. The polarity triplet signature gives us a concrete target pattern for synthetic data generation with gprMax.
+This is the closest published work to what I want to do. The physics they describe is exactly what my ML model needs to learn from synthetic data. The polarity triplet signature gives me a concrete target pattern for synthetic data generation with gprMax.
 
 ## 3-2-1
 

@@ -82,7 +82,7 @@ All classes share a bright horizontal band in the top few rows (the direct/surfa
 
 ## Data quality issues and risks
 
-1. **Original image inconsistency**: Intact originals are 1577x476 RGB. Cavity originals are ~588x326 RGB. Utility originals are 224x224 RGB. Three completely different formats. The augmented set normalizes this to 224x224 grayscale, which is what we'll actually use.
+1. **Original image inconsistency**: Intact originals are 1577x476 RGB. Cavity originals are ~588x326 RGB. Utility originals are 224x224 RGB. Three completely different formats. The augmented set normalizes this to 224x224 grayscale, which is what I'll actually use.
 
 2. **JPEG compression**: All images are lossy JPEG. Fine-grained signal information is degraded. Probably not a problem for classification, but worth noting for any attempt at signal-level analysis.
 
@@ -108,7 +108,7 @@ All classes share a bright horizontal band in the top few rows (the direct/surfa
 - **Split by original ID**: This is non-negotiable. Random image-level splits will leak.
 - **Expect ~285 effective training examples**: Plan for high regularization, dropout, weight decay. Pre-trained models will help.
 - **Class imbalance is moderate**: Cavities at 25% is a bit low. Use weighted loss (inverse frequency) or oversample.
-- **Watch for overfitting**: Track train-val gap carefully. If train accuracy hits 99% while val is at 75%, we're memorizing.
+- **Watch for overfitting**: Track train-val gap carefully. If train accuracy hits 99% while val is at 75%, I'm memorizing.
 - **Grad-CAM or similar**: After training, check what the model actually looks at. If it's learning border artifacts or spatial position rather than GPR features, the results are unreliable.
 
 ## Open questions
@@ -117,4 +117,4 @@ All classes share a bright horizontal band in the top few rows (the direct/surfa
 - Are the original images from the same GPR equipment and survey site? Or is there domain shift between originals?
 - How well do the bounding boxes align with the actual physical anomaly signatures? Are they tight or loose?
 - Would a binary framing (anomaly vs. intact) give better results than 3-class?
-- What happens when we test on completely new GPR data from a different source?
+- What happens when I test on completely new GPR data from a different source?

@@ -46,11 +46,11 @@ Pushes the fossil CT segmentation approach further by showing you can achieve hi
 
 This is essentially active learning / human-in-the-loop, even though they don't frame it that way.
 
-## What matters for our project
+## What matters for my project
 
-**You don't need thousands of annotations.** 18 annotated examples with strong augmentation and a high-capacity encoder can produce 0.96 Dice. This is extremely encouraging for our GPR work where labeled data is scarce.
+**You don't need thousands of annotations.** 18 annotated examples with strong augmentation and a high-capacity encoder can produce 0.96 Dice. This is extremely encouraging for my GPR work where labeled data is scarce.
 
-**The iterative refinement approach is practical.** Train on a few labels, predict, correct, retrain. We could apply this exact workflow to GPR anomaly annotations.
+**The iterative refinement approach is practical.** Train on a few labels, predict, correct, retrain. I could apply this exact workflow to GPR anomaly annotations.
 
 **EfficientNet-V2 as a backbone.** The large EfficientNet encoder brings a lot of learned visual features even though it was pretrained on natural images. The transfer from ImageNet to micro-CT fossil segmentation apparently works, which suggests transfer from ImageNet to GPR B-scans is also plausible.
 
@@ -60,10 +60,10 @@ This is essentially active learning / human-in-the-loop, even though they don't 
 
 ## What I want to steal
 
-- **The minimal-annotation workflow.** We could apply the same iterative approach: label a few GPR B-scan regions, train, predict, refine.
-- **Albumentations for augmentation.** We should use this library for our GPR augmentation pipeline.
+- **The minimal-annotation workflow.** I could apply the same iterative approach: label a few GPR B-scan regions, train, predict, refine.
+- **Albumentations for augmentation.** I should use this library for my GPR augmentation pipeline.
 - **TTA at inference.** Averaging predictions over augmented versions of the input reduces noise. Simple to implement, free performance gain.
-- **Negative sampling ratio (2 negatives per 8-17 positives).** This balance worked well for them and could guide our training data preparation.
+- **Negative sampling ratio (2 negatives per 8-17 positives).** This balance worked well for them and could guide my training data preparation.
 - **The UNet + EfficientNet-V2 architecture.** A strong baseline for any segmentation task with limited data.
 
 ## Limitations
@@ -73,7 +73,7 @@ This is essentially active learning / human-in-the-loop, even though they don't 
 - 5000 epochs of training is a lot. Likely significant overfitting mitigated by augmentation.
 - The 0.96 Dice is a validation metric on the simplest ROI excluded from training. The average Dice across all ROIs would be lower.
 
-## Relevance to our project: MODERATE
+## Relevance to my project: MODERATE
 
 Not GPR, but the annotation-efficient workflow and the architectural choices are directly applicable. The key lesson is that a well-designed training pipeline can compensate for limited labels.
 
@@ -89,4 +89,4 @@ Not GPR, but the annotation-efficient workflow and the architectural choices are
 2. How many annotated GPR B-scans would be needed for equivalent detection quality, given that GPR data is noisier and lower resolution than synchrotron micro-CT.
 
 **1 thing I want to investigate:**
-Test whether the iterative annotation workflow can be adapted for GPR anomaly detection: start with our existing YOLO annotations, convert to segmentation masks, train a UNet, predict on unlabeled data, and refine.
+Test whether the iterative annotation workflow can be adapted for GPR anomaly detection: start with my existing YOLO annotations, convert to segmentation masks, train a UNet, predict on unlabeled data, and refine.

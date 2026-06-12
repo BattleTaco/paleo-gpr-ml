@@ -6,9 +6,9 @@ Move from "which class is this image?" to "where is the anomaly?" Using the YOLO
 
 This is a harder task than classification. The model needs to both identify that an anomaly exists and predict its spatial location. This is the stepping stone to fossil-like anomaly detection.
 
-## Why detection matters more than classification for our research
+## Why detection matters more than classification for my research
 
-Classification tells us "this B-scan contains a cavity." Detection tells us "there's a cavity centered at (x=112, y=156) with approximate extent 60x45 pixels." For paleontological prospecting, we need the second thing. A field archaeologist needs to know *where to dig*, not just that something is there.
+Classification tells me "this B-scan contains a cavity." Detection tells me "there's a cavity centered at (x=112, y=156) with approximate extent 60x45 pixels." For paleontological prospecting, I need the second thing. A field archaeologist needs to know *where to dig*, not just that something is there.
 
 ## Dataset
 
@@ -20,13 +20,13 @@ Classification tells us "this B-scan contains a cavity." Detection tells us "the
 
 ## Detection framing
 
-Two options, and we should try both:
+Two options, and I should try both:
 
 ### Option A: 2-class detection
 - Class 0: cavity
 - Class 1: utility
 - Intact images as negative samples (no detections expected)
-- This is the natural framing given our annotations
+- This is the natural framing given my annotations
 
 ### Option B: Binary anomaly detection
 - Class 0: anomaly (both cavities and utilities)
@@ -39,7 +39,7 @@ Two options, and we should try both:
 - Ultralytics YOLOv8n or YOLOv8s (nano or small)
 - Why: fast, well-supported, strong on small datasets with augmentation, single-stage detector
 - Input: 224x224 or upscale to 640x640 (YOLO's native size)
-- Pretrained on COCO, fine-tune on our data
+- Pretrained on COCO, fine-tune on my data
 
 ### Faster R-CNN (secondary)
 - torchvision Faster R-CNN with ResNet50-FPN backbone
@@ -47,9 +47,9 @@ Two options, and we should try both:
 - Pretrained on COCO, fine-tune
 
 ### ResNet18 as detector (control)
-- Take our trained ResNet18 classifier
+- Take my trained ResNet18 classifier
 - Use Grad-CAM heatmap thresholding as a pseudo-detection method
-- This gives us a "free" detection baseline from the classification model
+- This gives me a "free" detection baseline from the classification model
 
 ## Training
 

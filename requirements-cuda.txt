@@ -1,0 +1,60 @@
+# Requirements for the CUDA training machine (RTX 5090, Blackwell, compute capability sm_120).
+#
+# Blackwell GPUs need CUDA 12.8 or newer and a PyTorch built against cu128. Stable wheels can
+# lag new silicon, so use the NIGHTLY cu128 build. Install in two steps so torch comes from the
+# right index and the rest does not drag in a cpu/cu124 torch:
+#
+#   # 1) PyTorch nightly for Blackwell (cu128). This owns torch/vision/audio:
+#   pip install --pre torch torchvision torchaudio \
+#       --index-url https://download.pytorch.org/whl/nightly/cu128
+#
+#   # 2) everything else (this file does NOT pin torch on purpose):
+#   pip install -r requirements-cuda.txt
+#
+#   # 3) the project package, without re-resolving torch:
+#   pip install -e . --no-deps
+#
+# Verify the GPU is actually seen and is Blackwell:
+#   python -c "import torch; print(torch.__version__); print(torch.cuda.get_device_name(0)); print(torch.cuda.get_device_capability(0))"
+# Expect a 2.x.dev (nightly) version, "NVIDIA GeForce RTX 5090", and capability (12, 0).
+# If torch.cuda.is_available() is False or capability is wrong, the wrong wheel got installed.
+
+# Core scientific stack
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+scikit-learn>=1.3
+scikit-image>=0.22
+h5py>=3.9
+pillow>=10.0
+matplotlib>=3.7
+seaborn>=0.12
+pyyaml>=6.0
+tqdm>=4.65
+click>=8.1
+
+# Detection / classification / augmentation
+ultralytics>=8.1
+timm>=0.9
+albumentations>=1.4
+opencv-python>=4.8
+segmentation-models-pytorch>=0.3
+
+# Volumetric / CT segmentation direction
+monai>=1.3
+
+# Config + experiment tracking
+omegaconf>=2.3
+hydra-core>=1.3
+tensorboard>=2.15
+
+# Notebooks + dev tooling
+jupyterlab>=4.0
+ipykernel>=6.0
+ipywidgets>=8.0
+pytest>=7.4
+ruff>=0.4
+mypy>=1.5
+
+# gprMax is NOT on PyPI. Build it from source on this machine (see
+# docs/notes/12_cuda_runbook.md). GPU-accelerated FDTD also needs pycuda + the CUDA 12.8 toolkit.

@@ -13,7 +13,7 @@ Review of ML/DL methods applied to GPR data, with a focus on archaeological pros
 
 **GPR data comes in four formats, and each has different ML approaches:**
 1. A-scans (individual traces) - mostly used for inversion and classification of single traces
-2. B-scans (2D radargrams) - the format our dataset uses. Object detection and classification.
+2. B-scans (2D radargrams) - the format my dataset uses. Object detection and classification.
 3. C-scans (time/depth slices) - horizontal slices showing spatial distribution of reflectors. Segmentation is the natural task.
 4. 3D volumes - least explored with ML. Future direction.
 
@@ -25,7 +25,7 @@ Review of ML/DL methods applied to GPR data, with a focus on archaeological pros
 - Faster R-CNN for detecting buried objects [Pham et al.]
 - Most of these used lab-controlled data or synthetic data from gprMax
 
-**Critical finding: most B-scan studies used synthetic data.** Because labeled real GPR data is scarce, researchers commonly generate synthetic training data with gprMax. This directly validates our planned synthetic data pipeline.
+**Critical finding: most B-scan studies used synthetic data.** Because labeled real GPR data is scarce, researchers commonly generate synthetic training data with gprMax. This directly validates my planned synthetic data pipeline.
 
 **Archaeological applications specifically:**
 - Verdonck: R-CNN for detecting diffraction hyperbolas in B-scans
@@ -47,22 +47,22 @@ Review of ML/DL methods applied to GPR data, with a focus on archaeological pros
 
 ## What I want to steal from this paper
 
-- **The precedent of synthetic + augmented GPR data for training.** Green et al. used GprSIM + gprMax synthetic data combined with real data. We should do the same.
-- **ResNet152 as a strong baseline for GPR classification.** Our ResNet18 already crushes it, but for harder tasks (detection, cross-domain), a deeper backbone might be needed.
-- **The U-shaped architecture for segmentation.** If we move to segmentation instead of bounding box detection, U-Net is the established architecture for GPR.
-- **The explicit note that simulated data is better for tuning than for training the final model.** This means our synthetic data strategy should include a fine-tuning step on real data.
-- **R-CNN family for B-scan object detection.** Faster R-CNN has been used successfully for GPR object detection. We should compare this with YOLO.
+- **The precedent of synthetic + augmented GPR data for training.** Green et al. used GprSIM + gprMax synthetic data combined with real data. I should do the same.
+- **ResNet152 as a strong baseline for GPR classification.** My ResNet18 already crushes it, but for harder tasks (detection, cross-domain), a deeper backbone might be needed.
+- **The U-shaped architecture for segmentation.** If I move to segmentation instead of bounding box detection, U-Net is the established architecture for GPR.
+- **The explicit note that simulated data is better for tuning than for training the final model.** This means my synthetic data strategy should include a fine-tuning step on real data.
+- **R-CNN family for B-scan object detection.** Faster R-CNN has been used successfully for GPR object detection. I should compare this with YOLO.
 
 ## Limitations of this paper
 
 - Published 2022, so misses the recent surge in transformer-based detection and YOLO v8+
-- Limited to archaeological applications. Doesn't cover infrastructure (our dataset domain) or paleontology.
+- Limited to archaeological applications. Doesn't cover infrastructure (my dataset domain) or paleontology.
 - Thin on implementation details. It's a high-level survey.
 - Doesn't cover domain adaptation or transfer between different GPR domains.
 
-## Relevance to our project: HIGH
+## Relevance to my project: HIGH
 
-Maps the landscape of what's been done with ML + GPR. Key takeaways: synthetic data is standard practice, R-CNN and YOLO are the detection architectures to try, and the annotation bottleneck is real. Our approach of starting with infrastructure data and bridging to fossil detection through synthetic data fits within the established methodology but targets a new application.
+Maps the landscape of what's been done with ML + GPR. Key takeaways: synthetic data is standard practice, R-CNN and YOLO are the detection architectures to try, and the annotation bottleneck is real. My approach of starting with infrastructure data and bridging to fossil detection through synthetic data fits within the established methodology but targets a new application.
 
 ## 3-2-1
 
@@ -76,4 +76,4 @@ Maps the landscape of what's been done with ML + GPR. Key takeaways: synthetic d
 2. Whether any of the cited methods have been tested across different GPR equipment or survey sites (cross-domain generalization).
 
 **1 thing I want to investigate:**
-Try Faster R-CNN in addition to YOLO for our detection task on the cavity/utility annotations. The literature suggests both work, and comparing them on our specific data would be informative.
+Try Faster R-CNN in addition to YOLO for my detection task on the cavity/utility annotations. The literature suggests both work, and comparing them on my specific data would be informative.

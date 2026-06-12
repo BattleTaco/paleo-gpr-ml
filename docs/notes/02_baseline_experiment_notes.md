@@ -2,7 +2,7 @@
 
 **Date**: 2026-03-23
 **Notebook**: `notebooks/02_baseline_classification.ipynb`
-**Experiment spec**: `docs/experiment_01_baseline.md`
+**Experiment spec**: `docs/experiments/experiment_01_baseline.md`
 
 ---
 
@@ -43,10 +43,10 @@ Honestly, probably yes for the classification framing. A few things to consider:
 - The train-val gap is tiny, suggesting the model is generalizing, not memorizing
 - The 96.7% accuracy of the simple CNN means even a shallow architecture picks this up
 
-**Arguments that we should be cautious:**
+**Arguments that I should be cautious:**
 - 99.5% on a research dataset with pre-applied augmentation is suspiciously high
 - The augmented variants of different originals within the same class may still be quite similar (e.g., all intact images look roughly the same regardless of original)
-- We haven't checked whether the model is learning GPR features or dataset-specific shortcuts (color distribution, border artifacts, etc.)
+- I haven't checked whether the model is learning GPR features or dataset-specific shortcuts (color distribution, border artifacts, etc.)
 - This dataset has 3 very different classes. Real-world GPR anomaly detection would need to distinguish much subtler targets (fossil-like objects from rocks, roots, and geological features)
 
 **What would make me more confident:**
@@ -68,7 +68,7 @@ The SimpleCNN errors are slightly more interesting. It has about 13 misclassific
 
 3. **The bigger question is generalization.** Can a model trained on this dataset detect anomalies in GPR data from a different source? That's the transfer learning and synthetic data question, and it's the core of this research project.
 
-4. **Grad-CAM is still worth doing.** Even though accuracy is high, verifying that the model attends to the right spatial regions builds confidence that we're learning physics, not artifacts.
+4. **Grad-CAM is still worth doing.** Even though accuracy is high, verifying that the model attends to the right spatial regions builds confidence that I'm learning physics, not artifacts.
 
 ## Next steps
 
@@ -79,7 +79,7 @@ The SimpleCNN errors are slightly more interesting. It has about 13 misclassific
 
 ## Lessons
 
-- High accuracy on a pre-augmented dataset with distinct classes doesn't tell us much about real-world performance. The EDA was more informative than the model training for understanding this data.
+- High accuracy on a pre-augmented dataset with distinct classes doesn't tell me much about real-world performance. The EDA was more informative than the model training for understanding this data.
 - The by-ID split worked as intended. No sign of leakage.
 - The intact class has way more unique IDs (482) than originals (75). The augmented filenames aren't a 1:1 map to the original directory. This is good for diversity but confusing for provenance tracking.
 - Simple CNNs are surprisingly strong when the classes are visually distinct. The ResNet's marginal gain (96.7% to 99.5%) suggests that the extra capacity mostly helps on edge cases.

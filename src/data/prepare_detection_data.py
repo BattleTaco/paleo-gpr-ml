@@ -113,7 +113,7 @@ def prepare_detection_data(
                         for line in f:
                             parts = line.strip().split()
                             if len(parts) >= 5:
-                                # Replace original class ID with our mapping
+                                # Replace original class ID with the mapping
                                 parts[0] = str(new_class_id)
                                 lines.append(" ".join(parts))
 

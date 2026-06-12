@@ -15,16 +15,16 @@ Structured comparison of papers relevant to GPR-based fossil prospecting with ML
 
 ## Key Methods Across Papers
 
-| Method | Used By | Our Applicability |
+| Method | Used By | My Applicability |
 |---|---|---|
-| gprMax synthetic data | Green et al. (via GPR AI Review), multiple B-scan studies | Core to our synthetic data pipeline |
+| gprMax synthetic data | Green et al. (via GPR AI Review), multiple B-scan studies | Core to my synthetic data pipeline |
 | Forward modeling (Ricker wavelet) | Peredo et al. (Vertebrate Skeleton GPR) | Validate synthetic signatures |
 | Kirchhoff migration | Catanzariti et al. (Dinosaur Sicily) | Preprocessing option for detection |
-| Hilbert transform / instantaneous amplitude | Catanzariti et al. (Dinosaur Sicily) | Already implemented in our features |
+| Hilbert transform / instantaneous amplitude | Catanzariti et al. (Dinosaur Sicily) | Already implemented in my features |
 | U-Net segmentation | Yu et al. (CT), Knutsen (CT), Kücükdemirci (GPR C-scans) | Candidate for GPR anomaly segmentation |
 | DeepLab v3+ | Yu et al. (CT) | Candidate architecture |
 | Faster R-CNN | Verdonck, Pham et al. (via GPR AI Review) | Compare with YOLO for detection |
-| ResNet152 transfer learning | Green et al. (via GPR AI Review) | Our ResNet18 already works; deeper may help for harder tasks |
+| ResNet152 transfer learning | Green et al. (via GPR AI Review) | My ResNet18 already works; deeper may help for harder tasks |
 | Iterative annotation (human-in-the-loop) | Knutsen & Konovalov (CT) | Practical for scaling GPR annotations |
 | Test-time augmentation | Knutsen & Konovalov (CT) | Free performance boost at inference |
 | Polarity triplet analysis | Peredo et al. (Vertebrate Skeleton GPR) | Physics constraint for synthetic data |
@@ -39,15 +39,15 @@ Structured comparison of papers relevant to GPR-based fossil prospecting with ML
 
 4. **Cross-frequency GPR detection.** Models trained on 400 MHz data being tested on 2 GHz data (or vice versa) has not been systematically studied.
 
-## What This Means for Our Project
+## What This Means for My Project
 
 The literature says:
 - GPR can physically detect buried fossils (Peredo, Catanzariti). The physics works.
 - ML can detect objects in GPR B-scans (Green, Verdonck, Pham). The method works.
 - Nobody has combined these two things. The intersection is empty.
 
-Our contribution:
-- Train ML model on infrastructure GPR data (where we have annotations)
+My contribution:
+- Train ML model on infrastructure GPR data (where I have annotations)
 - Generate synthetic fossil-like GPR data with gprMax using dielectric properties from the paleontological GPR papers
 - Test whether the model transfers to detecting fossil-like anomalies
 - Use domain adaptation if direct transfer fails

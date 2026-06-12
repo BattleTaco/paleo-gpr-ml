@@ -1,6 +1,12 @@
 # Research Contribution: What Makes This Novel
 
 **Date**: 2026-03-23
+**Update (2026-06-10)**: The "gap" analysis below still holds, but the framing has been
+sharpened into a falsifiable, defensible hypothesis. **Read `docs/notes/09_research_hypothesis.md`
+for the current thesis (H1: void→fossil transfer fails due to polarity inversion; I
+characterize and close it).** I retired "first ML approach" as the *headline* claim
+(novelty-by-absence is fragile, and my infrastructure dataset turned out to be a published
+public benchmark). The defensible contribution is the mechanistic transfer study, not "first."
 
 ---
 
@@ -16,7 +22,7 @@ After reading the literature, the picture is clear. Three things exist independe
 
 **What doesn't exist**: ML-based fossil detection from GPR data. Nobody has connected (1) and (2) for the paleontological use case.
 
-## Our contribution
+## My contribution
 
 **First ML approach to fossil prospecting from GPR radargrams.**
 
@@ -36,20 +42,20 @@ This isn't a new architecture or a new training technique. It's a new *applicati
 - Flag high-priority areas for targeted excavation
 - Enable systematic subsurface surveys of large areas
 
-**Nobody is working on this.** The paleontology community doesn't have ML expertise in GPR. The GPR ML community doesn't target paleontological applications. We sit at the intersection.
+**Nobody is working on this.** The paleontology community doesn't have ML expertise in GPR. The GPR ML community doesn't target paleontological applications. I sit at the intersection.
 
-## What we need to show
+## What I need to show
 
-To make the contribution credible, we need:
+To make the contribution credible, I need:
 
 1. **Baseline detection works on infrastructure data.** (Experiment 02) Shows the method is sound.
 2. **Synthetic fossil data is physically realistic.** (gprMax validation) Shows the synthetic data captures the right physics.
 3. **Some degree of transfer from infrastructure to fossil-like targets.** Even partial transfer is interesting. If it fails completely, characterizing *why* is also valuable.
 4. **Analysis of what the model learns.** (Grad-CAM, feature analysis) Shows the model uses physically meaningful features, not dataset artifacts.
 
-## What we don't need to show
+## What I don't need to show
 
-- State-of-the-art detection on infrastructure GPR (others have done this, it's not our contribution)
+- State-of-the-art detection on infrastructure GPR (others have done this, it's not my contribution)
 - Perfect fossil detection (this is a first attempt, baseline results are fine)
 - Field validation on real fossils (aspirational but not required for the first paper)
 
@@ -60,7 +66,7 @@ To make the contribution credible, we need:
 **Story**:
 - GPR is physically capable of detecting buried fossils (cite Peredo, Catanzariti)
 - ML detection of GPR anomalies is established for infrastructure (cite Green, Kücükdemirci, others)
-- We bridge these by training on infrastructure data, generating synthetic fossil-like targets, and testing transfer
+- I bridge these by training on infrastructure data, generating synthetic fossil-like targets, and testing transfer
 - Results: [baseline detection performance, Grad-CAM analysis, synthetic data quality, transfer results]
 - This is the first study to apply ML to GPR data for paleontological prospecting
 
@@ -73,5 +79,5 @@ To make the contribution credible, we need:
 ## Risks to novelty
 
 - Someone else publishes this exact idea first. Risk is low given how niche the intersection is, but the GPR community is active.
-- The transfer doesn't work at all, and we can't show any positive result on fossil-like targets. Mitigation: characterizing the failure mode is itself publishable if done well.
+- The transfer doesn't work at all, and I can't show any positive result on fossil-like targets. Mitigation: characterizing the failure mode is itself publishable if done well.
 - Reviewers don't see the practical value. Mitigation: frame around the fieldwork impact and the broader trend of AI in earth sciences.

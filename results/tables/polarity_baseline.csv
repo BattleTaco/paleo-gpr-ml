@@ -1,0 +1,5 @@
+target,eps,detected,polarity,expected_polarity,ncc_score,correct
+void,1.0,True,1,1,1.0,True
+bone,9.0,True,-1,-1,-1.0,True
+anti_bone,1.7778,True,1,1,1.0,True
+null,4.0,False,0,0,0.0,True
