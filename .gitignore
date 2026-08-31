@@ -237,3 +237,5 @@ results/logs/
 
 .idea/
 .vscode/
+# Claude Code local settings
+.claude/
