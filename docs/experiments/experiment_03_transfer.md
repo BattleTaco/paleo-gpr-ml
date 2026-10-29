@@ -181,8 +181,8 @@ If T1 + F2 + F3 land, the paper's core claim is made. F4-F6 make it complete and
 ## 10. Milestones (gates, not dates)
 
 1. [ ] This spec reviewed/frozen.
-2. [ ] gprMax running on CUDA box; fidelity check passes (§3.2).
-3. [ ] Controlled synthetic sets generated (void/bone/anti-bone/null), manifests logged.
+2. [x] gprMax running on CUDA box; fidelity check passes (§3.2, redefined in A1.1).
+3. [x] Controlled synthetic sets generated (void/bone/anti-bone/null), manifests logged (A1.7).
 4. [ ] Real-fossil digitized anchor collected + provenance logged.
 5. [ ] Physics baseline implemented (Cbase).
 6. [ ] C0-C2 run on 2 architectures -> H1a, H1b decided.
@@ -192,3 +192,73 @@ If T1 + F2 + F3 land, the paper's core claim is made. F4-F6 make it complete and
 
 Gate after step 6: if H1a or H1b is refuted, I pivot the paper's story honestly (the data
 decides the narrative), not abandon it. The controls guarantee I learn something either way.
+
+---
+
+## Amendment A1 (2026-10-29): synthetic data pipeline, before any model training
+
+Logged per the rule at the top. **No model has been trained and no detection metric has been
+computed**, so none of these changes could have been tuned toward a result. All of them
+came out of building and checking the data.
+
+**A1.1 Fidelity check redefined (§3.2).** The pilot's probe read the sign of the largest sample
+in a ±30-sample window at the analytic two-way time to the target *center*. It left out the
+Ricker source delay (√2/f, about 750 samples at 400 MHz), so the window sat before the target
+arrival and was reading the wavelet's leading tail. The signs it reported were internally
+consistent, but they did not come from the main reflection. Reading absolute polarity against
+the direct wave doesn't work here either: at 400 MHz the 4 cm antenna offset is in the near
+field, and on the pilot that reference gave void and bone the same sign. New check
+(`src/data/synthetic_fidelity.py`), per scene, on the target response
+`bscan(target) − bscan(null twin)` at the apex trace, in a window from the top arrival to
+one wavelet period after it:
+- NCC(bone, anti_bone) ≤ −0.5 (equal |r|, opposite sign: must be anti-correlated)
+- NCC(void, anti_bone) ≥ +0.5 (both low eps: must agree)
+- |bone| / |anti_bone| in [0.5, 2] (the magnitude matching actually holds)
+
+This tests the bone/void polarity contrast H1 depends on without assuming a sign convention
+for the source. Pilot (8 clean scenes): NCC(bone, anti) −0.76 to −1.00, NCC(void, anti) +0.89
+to +0.99, amplitude ratio 0.73 to 1.07. All pass.
+
+**A1.2 Physics note for the analysis.** At 400 MHz the 10 cm target is about λ/4 in the host.
+Bone's bottom reflection (bone→host, positive) overlaps the top one: over a 1.5-period window,
+NCC(bone, anti) falls to −0.27 in dry sand, against −0.96 at 800 MHz. So bone's 400 MHz
+signature is a mixed-polarity doublet rather than a clean inverted pulse. Expect frequency to
+moderate H1b, and report C2 per frequency as well as pooled.
+
+**A1.3 Labels measured, not computed.** The pilot's YOLO boxes came from the same analytic
+travel time and missed the target: 0 to 1% of target energy inside the box at 400 MHz.
+Boxes now come from the measured target response (paired null difference). Lateral extent is
+the apex ± 1 × depth; vertical extent is where the response is above 20% of its peak.
+
+**A1.4 Detector input = background-removed images.** Primary input: mean-trace background
+removal → t² gain → per-image 99th-percentile clip (variant `bgr`). Reason: the real benchmark
+images have the direct wave suppressed and are gained per image. Without background removal
+the direct wave sets the clip level and deep targets nearly vanish. The `raw` variant
+(identical labels) is kept as an ablation. Known effect: per-image normalization stretches the
+clutter in null images to full contrast, so the four twins are not pixel-equivalent in
+brightness. That is realistic (real negatives look like this), and it does not touch C2,
+because bone and anti_bone are magnitude-matched.
+
+**A1.5 Main synthetic set (configs/synthetic_controlled.yaml).** 2 hosts (dry sand 4, limestone
+6) × depths {10, 15, 20} cm × {400, 800} MHz × lateral positions {0.30, 0.40, 0.50} m × 2
+clutter realizations = **72 scene cells per target type, 288 models**, against the planned ~75.
+Clutter is 8 to 16 small cylinders (r 3 to 12 mm, eps = host × U[0.6, 1.8]), seeded per scene
+cell so all four twins share the exact clutter. The range includes bone-polarity point
+scatterers on purpose. Domain widened to 0.8 m (the pilot's 20 cm hyperbolas ran off the
+edges). Trace step 8 mm, still about 5× oversampled at 800 MHz. Wet sand and clay are not
+included yet: with host eps > bone eps the anti_bone control is undefined, and that regime
+needs its own control design. The 2 GHz robustness check is deferred.
+
+**A1.6 Split unit.** Splits must be by scene cell (all four twins and both image variants go
+to the same split). Lateral position and clutter realization are the within-cell variation;
+host × depth × freq are the strata.
+
+**A1.7 Main set result (2026-10-29).** 288/288 models simulated (0 failures), fidelity gate
+**PASS 72/72** scene cells. Median NCC(bone, anti): dry sand −0.76 (400 MHz) / −0.98 (800 MHz),
+limestone −0.97 / −1.00. Median bone target-to-clutter ratio (TCR): dry sand 13.0 / 8.3,
+limestone 3.8 / **1.65 (min 0.75)**. In limestone, bone's contrast is weak (|r| ≈ 0.1) and
+clutter reflects about as strongly, so some limestone 800 MHz bone targets sit at clutter
+level. That gives a natural difficulty axis. **Report detection metrics per host × freq
+stratum, plus TCR-binned recall, not pooled only.** Artifacts:
+`data/processed/synthetic/controlled/{manifest.csv, clutter.json, fidelity_report.csv,
+images/{bgr,raw}/...}`.
