@@ -63,3 +63,29 @@ def normalize(bscan: np.ndarray) -> np.ndarray:
     if max_val == 0:
         return bscan
     return bscan / max_val
+
+
+def remove_background(bscan: np.ndarray, trace_axis: int = 0, method: str = "mean") -> np.ndarray:
+    """Subtract the across-trace average from every time sample (standard GPR background removal).
+
+    The direct air/ground wave and flat layer reflections are nearly identical on every trace, so
+    removing the average trace isolates laterally varying features like target hyperbolas.
+
+    Parameters
+    ----------
+    bscan:
+        2-D B-scan. ``trace_axis`` says which axis indexes antenna position. This module's
+        convention is ``(n_traces, n_samples)`` so the default is 0; gprMax output is
+        ``(n_samples, n_traces)``, so call with ``trace_axis=1`` there.
+    method:
+        ``"mean"`` (classic) or ``"median"`` (less biased when a hyperbola spans many traces).
+    """
+    if bscan.ndim != 2:
+        raise ValueError(f"Expected a 2-D B-scan, got shape {bscan.shape}.")
+    if method == "mean":
+        ref = bscan.mean(axis=trace_axis, keepdims=True)
+    elif method == "median":
+        ref = np.median(bscan, axis=trace_axis, keepdims=True)
+    else:
+        raise ValueError(f"Unknown background removal method: {method!r}")
+    return bscan - ref

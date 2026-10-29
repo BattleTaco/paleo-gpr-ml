@@ -1,78 +1,116 @@
-"""Tests for the gprMax output converter (image and box math).
+"""Tests for the gprMax output converter: rendering variants and measured-response labels.
 
-The HDF5 read runs on the CUDA box against real output, so it is not tested here. The image
-normalization and the bounding-box geometry are pure functions, and those are what could be
-silently wrong, so I test them on synthetic arrays and a synthetic manifest row.
+HDF5 reads run against real gprMax output and are exercised by the pipeline, not here. The label
+math is where a silent error costs the most (the pilot's analytic boxes missed every 400 MHz
+target), so it is tested on synthetic responses with a known location.
 """
 
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
-from src.data.process_gprmax_output import bbox_yolo, time_gain, to_uint8_image
+from src.data.preprocess_gpr import remove_background
+from src.data.process_gprmax_output import (
+    apex_trace_index,
+    bbox_from_response,
+    load_manifest,
+    render,
+    target_response,
+    time_gain,
+    to_uint8_image,
+)
 
-# A row shaped like what generate_gprmax_models writes (dry_sand, 10 cm deep, 400 MHz, bone).
-ROW_BONE = {
+ROW = {
+    "in_file": "s__bone.in",
     "target_type": "bone",
     "depth_m": "0.1",
-    "host_eps": "4.0",
     "trace_step_m": "0.004",
-    "n_traces": "96",
     "target_x_m": "0.25",
     "src_x0_m": "0.04",
     "rx_x0_m": "0.08",
 }
-DT_S = 4.7e-12
-N_SAMPLES = 2553
+N_SAMPLES, N_TRACES = 1000, 96
 
 
 def _row(**over):
-    r = dict(ROW_BONE)
-    r.update(over)
+    return {**ROW, **over}
+
+
+def _blob(t0: int, t1: int, c0: int, c1: int) -> np.ndarray:
+    r = np.zeros((N_SAMPLES, N_TRACES))
+    r[t0:t1, c0:c1] = 1.0
     return r
 
 
 def test_time_gain_boosts_deeper_samples():
-    b = np.ones((100, 10))
-    g = time_gain(b, power=2.0)
-    assert g.shape == b.shape
-    assert g[-1].mean() > g[0].mean()  # later (deeper) rows scaled up
-    assert g[0].mean() == 0.0  # first sample gain is 0
+    g = time_gain(np.ones((100, 10)), power=2.0)
+    assert g[-1].mean() > g[0].mean() and g[0].mean() == 0.0
 
 
-def test_to_uint8_image_range_and_dtype():
-    rng = np.random.default_rng(0)
-    b = rng.normal(size=(200, 50))
-    img = to_uint8_image(b)
-    assert img.dtype == np.uint8
-    assert img.shape == b.shape
-    assert img.min() >= 0 and img.max() <= 255
+def test_to_uint8_image_range_dtype_and_zero():
+    img = to_uint8_image(np.random.default_rng(0).normal(size=(200, 50)))
+    assert img.dtype == np.uint8 and img.shape == (200, 50)
+    assert np.all(to_uint8_image(np.zeros((10, 10))) == 0)
 
 
-def test_to_uint8_image_zeros():
-    img = to_uint8_image(np.zeros((10, 10)))
-    assert np.all(img == 0)
+def test_remove_background_kills_flat_events_keeps_local_ones():
+    b = np.zeros((50, 20))
+    b[10] = 5.0  # direct wave: identical on every trace
+    b[30, 8] = 1.0  # a local target
+    out = remove_background(b, trace_axis=1)
+    assert np.allclose(out[10], 0.0)
+    assert out[30, 8] > 0.9
+    with pytest.raises(ValueError):
+        remove_background(b, method="nope")
 
 
-def test_bbox_null_has_no_box():
-    assert bbox_yolo(_row(target_type="null"), N_SAMPLES, DT_S) is None
+def test_bgr_variant_suppresses_direct_wave_relative_to_raw():
+    # A direct wave spanning many samples (like a real wavelet) over a small noise floor.
+    b = np.random.default_rng(0).normal(scale=0.01, size=(400, 40))
+    b[150:250] += 10.0
+    b[300, 20] = 1.0
+    raw = render(b, {"background_removal": None}).astype(float)
+    bgr = render(b, {"background_removal": "mean"}).astype(float)
+    # In raw, the late target is weak relative to the clip level; bgr makes it saturate.
+    assert abs(bgr[300, 20] - 127.5) > abs(raw[300, 20] - 127.5)
 
 
-def test_bbox_bone_is_valid_and_centered():
-    box = bbox_yolo(ROW_BONE, N_SAMPLES, DT_S)
-    assert box is not None
-    cls, cx, cy, w, h = box
-    assert cls == 0
-    for v in (cx, cy, w, h):
-        assert 0.0 <= v <= 1.0
-    # Target sits at x=0.25 in a 0.04..~0.46 survey, so the apex is near the middle.
-    assert 0.4 < cx < 0.6
-    # 10 cm deep target gives a shallow apex, so the box center is in the upper half.
-    assert cy < 0.5
-    assert w > 0 and h > 0
+def test_apex_trace_index_centered():
+    # midpoint starts at 0.06 m, target at 0.25 m, 4 mm step -> 47.5
+    assert apex_trace_index(ROW) == pytest.approx(47.5)
 
 
-def test_bbox_deeper_target_lower_in_image():
-    shallow = bbox_yolo(_row(depth_m="0.1"), N_SAMPLES, DT_S)
-    deep = bbox_yolo(_row(depth_m="0.25"), N_SAMPLES, DT_S)
-    assert deep[2] > shallow[2]  # deeper target -> larger cy (further down the image)
+def test_bbox_tracks_measured_response_in_time():
+    # Response at samples 600-700 near the apex: the box must cover exactly that time span,
+    # wherever travel-time formulas would have put it.
+    _, cx, cy, w, h = bbox_from_response(_blob(600, 700, 45, 50), ROW, envelope_threshold=0.5)
+    assert cy * N_SAMPLES == pytest.approx(650, abs=1)
+    assert h * N_SAMPLES == pytest.approx(100, abs=1)
+    assert cx * N_TRACES == pytest.approx(47.5, abs=0.5)
+    # Lateral half width is one depth: 0.1 m / 4 mm = 25 traces.
+    assert w * N_TRACES == pytest.approx(50, abs=1)
+
+
+def test_bbox_clips_at_image_edge():
+    row = _row(target_x_m="0.08")  # apex near the left edge
+    _, cx, cy, w, h = bbox_from_response(_blob(100, 200, 0, 10), row)
+    assert cx - w / 2 >= -1e-9 and cx + w / 2 <= 1 + 1e-9
+    assert 0 < w < 0.5
+
+
+def test_bbox_rejects_zero_response():
+    with pytest.raises(ValueError):
+        bbox_from_response(np.zeros((N_SAMPLES, N_TRACES)), ROW)
+
+
+def test_target_response_requires_matching_twins():
+    with pytest.raises(ValueError):
+        target_response(np.zeros((10, 5)), np.zeros((10, 6)))
+
+
+def test_load_manifest_keeps_null_target_type(tmp_path):
+    p = tmp_path / "m.csv"
+    p.write_text("stem,target_type\na,bone\nb,null\n")
+    df = load_manifest(p)
+    assert list(df.target_type) == ["bone", "null"]

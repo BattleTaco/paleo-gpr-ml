@@ -1,43 +1,80 @@
-# Controlled synthetic GPR generation for the H1 transfer experiment.
+# Controlled synthetic GPR set for the H1 transfer experiment (main set, experiment_03 sec 3.2).
 #
-# This drives src/data/generate_gprmax_models.py. The design principle (see
-# docs/experiments/experiment_03_transfer.md C0-C2 and docs/notes/09_research_hypothesis.md) is to hold
-# scene geometry, depth, host medium, and target geometry constant across target types, and
-# vary only the target dielectric. That is what lets us read the result causally.
+# Pipeline (each step is resumable and config-driven):
+#   python -m src.data.generate_gprmax_models --config configs/synthetic_controlled.yaml
+#   python -m src.data.run_gprmax_batch       --config configs/synthetic_controlled.yaml --workers N
+#   python -m src.data.synthetic_fidelity     --config configs/synthetic_controlled.yaml
+#   python -m src.data.process_gprmax_output  --config configs/synthetic_controlled.yaml
 #
-# For every (host, depth, freq, x_center) cell we emit the same scene four times, once per
-# target type, sharing a scene_id so they pair exactly:
-#   void      eps = 1            (air-filled, low eps, positive top polarity, matches real cavities)
-#   bone      eps = bone_eps     (fossil-like, high eps, negative top polarity)
-#   anti_bone eps computed        (low eps, |reflection| matched to bone, positive polarity, H1b control)
-#   null      eps = host          (no contrast, negative control, should be ~undetectable)
+# Design: a scene cell is (host, depth, freq, x_center, clutter realization). Each cell is
+# written four times (void / bone / anti_bone / null) with identical geometry and clutter; only
+# the target eps changes. The null twin doubles as an exact reference for labels and the gate.
+#
+# Size: 2 hosts x 3 depths x 2 freqs x 3 positions x 2 clutter realizations = 72 cells per
+# target type, 288 models. Pilot (8 clean centered cells) lives in synthetic_controlled_pilot.yaml.
 
 experiment:
-  name: synthetic_controlled
+  name: controlled
   seed: 42
 
 domain:
   air_gap_m: 0.04        # air layer above the ground surface (antenna sits here)
-  ground_depth_m: 0.30   # modeled ground thickness below the surface
-  width_m: 0.50          # survey-line width (x)
-  dx_m: 0.002            # spatial step (2 mm) -> resolves up to ~GHz features
+  ground_depth_m: 0.35   # deepest target bottom at 0.25 m; keeps it 8 cm clear of the bottom PML
+  width_m: 0.80          # pilot was 0.50 and the 20 cm hyperbolas ran off both edges
+  dx_m: 0.002            # 2 mm; gprMax reports ~64 cells per wavelength in the host at 400 MHz
 
 antenna:
   separation_m: 0.04     # tx-rx offset
-  trace_step_m: 0.004    # src/rx move this far per B-scan trace
-  time_window_ns: 12.0   # record length
+  # 8 mm traces. lambda/4 in limestone at 800 MHz is ~3.8 cm, so this is still ~5x oversampled
+  # laterally, and it halves gprMax runs per model vs the pilot's 4 mm.
+  trace_step_m: 0.008
+  time_window_ns: 12.0   # deepest limb at the line edge arrives ~9.5 ns incl. the Ricker delay
 
 target:
   bone_eps: 9.0          # mid of Peredo's 7-12 range
   void_eps: 1.0
   radius_m: 0.05         # 10 cm diameter idealized cross-section (cylinder)
-  host_sigma_s_m: 0.005  # mild ground loss; same for all target types
+  host_sigma_s_m: 0.005  # mild ground loss; same for all target types and clutter
   target_sigma_s_m: 0.0  # keep target lossless so eps is the ONLY variable
 
 grid:
-  hosts:                 # name: relative permittivity
-    dry_sand: 4.0
+  hosts:                 # name: relative permittivity. Hosts must have eps < bone_eps, or the
+    dry_sand: 4.0        # anti_bone control is undefined (bone polarity itself flips).
     limestone: 6.0
-  depths_m: [0.10, 0.20]
+  depths_m: [0.10, 0.15, 0.20]   # target center depth below the surface
   freqs_mhz: [400, 800]
-  x_center_m: 0.25       # target horizontal position (centered)
+  x_centers_m: [0.30, 0.40, 0.50]
+
+clutter:
+  # Small cylinders: pebbles, nodules, root sections. eps is host x U(scale range), so the
+  # clutter includes both polarities, i.e. bone-polarity point scatterers exist in every scene.
+  # That is deliberate: polarity alone must not be a trivially unique cue.
+  realizations: 2
+  n_range: [8, 16]
+  radius_range_m: [0.003, 0.012]
+  eps_scale_range: [0.6, 1.8]
+  min_gap_m: 0.01
+
+output:
+  geometry_view: false   # with -n gprMax writes one per trace; ~80% of the pilot's disk use
+
+fidelity_gate:
+  max_ncc_bone_anti: -0.5     # bone vs magnitude-matched anti_bone must be anti-correlated
+  min_ncc_void_anti: 0.5      # void and anti_bone (both low eps) must agree
+  amp_ratio_range: [0.5, 2.0] # |bone| / |anti_bone| in the top window
+  onset_fraction: 0.1
+
+processing:
+  image_size: 416
+  labels:
+    envelope_threshold: 0.2   # box spans samples where the target response > 20% of its peak
+    half_width_depths: 1.0    # lateral half width = 1 x depth (apex + upper limbs)
+  variants:
+    bgr:                      # primary experiment_03 input; matches the real benchmark's look
+      background_removal: mean
+      gain_power: 2.0
+      clip_percentile: 99.0
+    raw:                      # ablation: direct wave kept, sets the clip level
+      background_removal: null
+      gain_power: 2.0
+      clip_percentile: 99.0
