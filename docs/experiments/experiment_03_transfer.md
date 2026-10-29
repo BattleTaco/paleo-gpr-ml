@@ -262,3 +262,46 @@ level. That gives a natural difficulty axis. **Report detection metrics per host
 stratum, plus TCR-binned recall, not pooled only.** Artifacts:
 `data/processed/synthetic/controlled/{manifest.csv, clutter.json, fidelity_report.csv,
 images/{bgr,raw}/...}`.
+
+## Amendment A2 (2026-10-29): C0-C2 execution design, fixed before any trained-model result
+
+Logged before the first real training run. Before writing this, the only thing executed was a
+2-epoch plumbing smoke test (outputs in a scratch dir). Its numbers come from untrained models;
+they were not used for any choice below and are not results.
+
+**A2.1 Cross-validation instead of a single 70/15/15 split.** 72 cells per target type gives
+about 11 test cells under a single split, too few for mAP CIs to resolve the pre-registered
+0.10 effect. Instead: grouped, stratified 6-fold CV over scene cells (strata: host × freq,
+3 cells per stratum per fold). Each run trains on 4 folds, selects its checkpoint on 1 val fold,
+and predicts on the held-out fold. Pooled out-of-fold predictions cover all 72 cells.
+Checkpoint selection only sees the training domain (void runs never validate on bone).
+
+**A2.2 Seeds.** 2 seeds per fold, so 12 training runs per condition (≥ 5 as required). Metrics
+are the mean over the two seed replicates of the pooled out-of-fold metric. CIs are the 95%
+percentile bootstrap over scene cells (10,000 resamples). Differences use a paired bootstrap
+(both conditions scored on the same resampled cells). The seed-to-seed spread is reported
+alongside.
+
+**A2.3 Evaluation sets.** For target domain T, the eval set is the T images plus the null
+images of the same cells (negatives), so mAP charges false positives on clutter-only scenes.
+Bone and anti_bone eval sets share the same null negatives.
+
+**A2.4 Conditions run in this pass.** Training conditions `void` (syn void + null), `bone`
+(syn bone + null), `real_void` (real binary train set + syn void + null). Mapping: C0a =
+void→void, C0b = bone→bone, C1 = real_void→bone, C2 = void→{anti_bone vs bone}, Cnull = void
+model false positives per image on null at conf 0.25. H1a = AP(C0b) − AP(C1). H1b =
+AP(void→anti_bone) − AP(void→bone). Decision rule exactly as in §1. AP(bone→bone) −
+AP(void→bone) (gap without real data) is reported as **exploratory**. Per host × freq strata
+are also reported, and are exploratory as well (not powered individually).
+
+**A2.5 Detector and augmentation.** YOLOv8n (COCO-pretrained), 416 px, ≤ 100 epochs, patience 20.
+Augmentation is physics-safe: horizontal flip only (reverses survey direction), mild
+translate/scale. No vertical flip (reverses time), no brightness/HSV (shifts the zero level, so
+biases polarity), no mosaic/mixup. Only C3b will add a sign flip. The second architecture
+family (§5) runs after this pass on the same folds.
+
+**A2.6 Added threat to validity (C1 only).** Whether the real benchmark JPEGs map positive
+amplitude to white like our renderer is unknown. If the convention is reversed, C1's
+real-data component carries inverted polarity. C2 is synthetic-only and unaffected. Before
+interpreting C1, determine the real data's display polarity (e.g. from the direct-wave /
+surface-reflection sign in the real images).

@@ -1,0 +1,68 @@
+# experiment_03 C0-C2 (+ Cnull): transfer of a GPR anomaly detector from voids to bone.
+# Spec: docs/experiments/experiment_03_transfer.md (pre-registered) + amendment A1 / A2.
+#
+#   python -m src.models.transfer_experiment run     --config configs/experiment_03_transfer.yaml
+#   python -m src.models.transfer_experiment analyze --config configs/experiment_03_transfer.yaml
+
+experiment:
+  name: experiment_03
+  seed: 1000
+  results_dir: results/experiment_03
+
+data:
+  synthetic_config: configs/synthetic_controlled.yaml  # where the images live
+  variant: bgr                                         # primary input (A1.4); raw = ablation
+  real_detection_dir: data/processed/detection/binary  # real cavities + utilities (C1 only)
+
+cv:
+  # Grouped, stratified K-fold over scene cells (A2.1). Each run: train on k-2 folds, select the
+  # checkpoint on 1 val fold (training-domain images only), predict on the held-out test fold.
+  # Every cell is tested exactly once per seed, so metrics pool all 72 cells.
+  k: 6
+  stratify_by: [host_name, freq_mhz]
+  seeds_per_fold: 2      # 6 folds x 2 seeds = 12 runs per condition (A2.2)
+
+# A training condition = which images the detector sees. Null twins of the same cells are always
+# included as negatives (background images), in train and val.
+train_conditions:
+  void:      {target_types: [void], real: false}   # C0a, C2, Cnull
+  bone:      {target_types: [bone], real: false}   # C0b ceiling
+  real_void: {target_types: [void], real: true}    # C1 naive transfer (real infra + syn void)
+
+model:
+  weights: notebooks/yolov8n.pt
+  imgsz: 416
+  epochs: 100
+  patience: 20
+  batch: 16
+  workers: 4
+  # Physics-safe augmentation. Nothing may change the sign or zero level of the wavefield,
+  # because polarity is the variable under test (only C3b adds a deliberate sign flip).
+  #   flipud: would reverse time.     hsv_*: brightness shifts move the zero (mid-gray) level.
+  #   mosaic/mixup: off; scale kept mild so hyperbola curvature (velocity) stays plausible.
+  augment:
+    fliplr: 0.5      # reverses survey direction; physically valid
+    flipud: 0.0
+    hsv_h: 0.0
+    hsv_s: 0.0
+    hsv_v: 0.0
+    mosaic: 0.0
+    close_mosaic: 0
+    mixup: 0.0
+    copy_paste: 0.0
+    degrees: 0.0
+    shear: 0.0
+    perspective: 0.0
+    translate: 0.1
+    scale: 0.2
+
+predict:
+  conf: 0.001   # keep low-score detections; AP and recall@FPI need the full score range
+  iou: 0.6
+  max_det: 10
+
+analysis:
+  iou_thr: 0.5
+  fpi: 0.1
+  n_boot: 10000
+  report_conf: 0.25   # operating threshold for the polarity-confusion detection rate
