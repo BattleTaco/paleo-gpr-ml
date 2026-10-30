@@ -1,8 +1,42 @@
 # RESUME HERE
 
-**Updated**: 2026-10-29 evening.
-**One-line state**: main controlled set is DONE: 288/288 simulated, gate PASS 72/72, images +
-labels written (bgr + raw). Next: experiment_03 C0-C2 in notebooks/06 (per-stratum reporting, A1.7).
+**Paused**: 2026-10-29 ~20:30 (PC shut down mid experiment_03 training, stopped cleanly).
+**One-line state**: experiment_03 C0-C2 training is **26/36 runs done** (void 12/12, bone 12/12,
+real_void 2/12). Resume the run, then analyze. No trained-model result has been looked at yet.
+
+## Resume experiment_03 (do these in order)
+
+1. Sanity check the GPU after boot (kernel bumps have broken the driver before, see History):
+   ```bash
+   conda activate paleo-gpr-ml
+   nvidia-smi && python -c "import torch; print(torch.cuda.get_device_name(0))"
+   ```
+2. Resume training. Finished runs (with `DONE.json`) are skipped. The interrupted run
+   `real_void/fold2_s0` was deleted so it reruns cleanly. About 10 real_void runs remain,
+   ~6 min each, so roughly 1 hour. The runner holds a sleep inhibitor itself.
+   ```bash
+   KMP_DUPLICATE_LIB_OK=TRUE python -m src.models.transfer_experiment run \
+       --config configs/experiment_03_transfer.yaml > results/experiment_03/run.log 2>&1
+   ```
+   Note: `> run.log` overwrites the old log. Use `>>` to keep it.
+3. Analyze (writes `results/experiment_03/bgr/analysis/{summary,per_stratum,run_spread}.csv`
+   and `decisions.json`):
+   ```bash
+   KMP_DUPLICATE_LIB_OK=TRUE python -m src.models.transfer_experiment analyze
+   ```
+   Figure: `src.visualization.plot_results.plot_transfer_figure(summary, per_stratum, path)`.
+4. Run the `research-integrity-check` skill **before** stating any H1a/H1b verdict. Decision
+   rules and the full design are fixed in experiment_03 sections 1 and A2 (committed before
+   training: 4dbd285).
+5. Report per host x freq stratum, not just pooled (A1.7: limestone 800 MHz bone TCR ~1.65).
+   Interpret C1/H1a with A2.6 in mind: real data display polarity is UNRESOLVED (see item 4 below).
+
+Training diagnostics seen so far (training-domain validation only, not results): every void and
+bone run reached val mAP50 0.97 to 0.995. Folds that early-stopped (34 to 46 epochs, patience 20
+on a 24-image val fold) have lower val mAP50-95. Report this via `run_spread.csv`.
+
+After C0-C2: C3a/b/c adaptation (C3b = sign-flip augmentation), second architecture (§5) on
+the same folds, `raw` variant ablation, C4 real-fossil anchor.
 
 ## 2026-10-29 evening: pipeline refactor + main set
 
