@@ -237,3 +237,6 @@ results/logs/
 
 .idea/
 .vscode/
+# experiment_03 runs: weights, symlinked datasets, raw predictions (regenerable).
+# Commit final analysis tables/figures explicitly with git add -f when reporting.
+results/experiment_03/
