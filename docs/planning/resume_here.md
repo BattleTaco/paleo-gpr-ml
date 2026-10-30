@@ -37,7 +37,20 @@ Open items:
 2. Write `notebooks/06_transfer_experiment.ipynb`. Split by scene cell (A1.6). Report C2 per
    frequency (A1.2: at 400 MHz bone is a mixed-polarity doublet).
 3. The `research-integrity-check` skill before any number is reported.
-4. Not yet covered: wet/clay hosts (anti_bone is undefined when host eps > bone eps), 2 GHz.
+4. A2.6 real display polarity: UNRESOLVED (2026-10-29). The real set's augmentations (hflip,
+   small rotations, shifts, noise) look polarity-preserving: no original matched an inverted copy
+   best. An apex first-lobe probe separates synthetic bone from void only partly (72% vs 31%
+   positive), and does NOT separate real cavities (47%) from utilities (55%). Real utilities are
+   metal (r about -1, bone-like sign), so in principle the real set holds both polarities, but
+   this probe cannot see it. Probe: scratchpad display_polarity.py (rewrite into src/ if needed).
+5. Not yet covered: wet/clay hosts (anti_bone is undefined when host eps > bone eps), 2 GHz.
+
+## Gotcha: the workstation auto-suspends after 15 idle minutes
+
+GNOME `sleep-inactive-ac-timeout=900`. On 2026-10-29 it silently paused a training run for 36
+minutes. `run_gprmax_batch` and `transfer_experiment run` now take a systemd sleep inhibitor
+tied to their own PID (`src/utils/system.inhibit_sleep`). For any other long job, wrap it in:
+`systemd-inhibit --what=sleep:idle --why="..." <command>`.
 
 ## History
 

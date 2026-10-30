@@ -30,6 +30,7 @@ from src.config import ROOT_DIR
 from src.data.generate_gprmax_models import default_out_dir, load_config
 from src.data.process_gprmax_output import load_manifest
 from src.models.detection_metrics import EvalSet, bootstrap_ci
+from src.utils.system import inhibit_sleep
 
 TARGET_TYPES = ("void", "bone", "anti_bone", "null")
 
@@ -316,14 +317,40 @@ class Experiment:
             )
 
         per_stratum = self._per_stratum(conds, es, max(n_boot // 5, 1000))
+        spread = self._run_spread(conds, es)
         extras = self._polarity_and_null(float(a["report_conf"]))
 
         out = self.root / "analysis"
         out.mkdir(parents=True, exist_ok=True)
         summary.to_csv(out / "summary.csv", index=False)
         per_stratum.to_csv(out / "per_stratum.csv", index=False)
+        spread.to_csv(out / "run_spread.csv", index=False)
         (out / "decisions.json").write_text(json.dumps({**decisions, **extras}, indent=1))
-        return {"summary": summary, "per_stratum": per_stratum, "decisions": decisions, **extras}
+        return {
+            "summary": summary,
+            "per_stratum": per_stratum,
+            "spread": spread,
+            "decisions": decisions,
+            **extras,
+        }
+
+    def _run_spread(self, conds, es) -> pd.DataFrame:
+        """Stability diagnostics (A2.2): pooled AP per seed replicate, and AP of each single run
+        on its own test fold. Not used for decisions."""
+        cell_fold = self.folds
+        rows = []
+        for c in conds:
+            for t in ("void", "bone", "anti_bone"):
+                for j, e in enumerate(es[(c, t)]):
+                    rows.append(
+                        {"train": c, "eval": t, "seed_idx": j, "fold": "pooled", "AP50": e.ap()}
+                    )
+                    for f in range(self.k):
+                        cells = e.cells[cell_fold.reindex(e.cells).to_numpy() == f]
+                        rows.append(
+                            {"train": c, "eval": t, "seed_idx": j, "fold": f, "AP50": e.ap(cells)}
+                        )
+        return pd.DataFrame(rows)
 
     def _per_stratum(self, conds, es, n_boot) -> pd.DataFrame:
         strata = self.images.drop_duplicates("cell").groupby(["host_name", "freq_mhz"])["cell"]
@@ -398,6 +425,7 @@ def main() -> None:
         cells = exp.images.drop_duplicates("cell")
         print(cells.groupby(["fold", "host_name", "freq_mhz"]).size().unstack([1, 2]))
     elif args.action == "run":
+        inhibit_sleep("experiment_03 training")
         exp.run_all(args.only)
     else:
         res = exp.analyze()

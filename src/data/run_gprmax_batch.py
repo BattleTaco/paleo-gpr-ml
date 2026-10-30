@@ -28,6 +28,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from src.utils.system import inhibit_sleep
+
 
 def gpu_available() -> bool:
     """True only if a CUDA device actually initializes.
@@ -185,6 +187,7 @@ def main() -> None:
     args = p.parse_args()
 
     raw_dir = args.raw_dir or default_out_dir(load_config(args.config))
+    inhibit_sleep("gprMax batch")
     results = run_batch(
         raw_dir, args.workers, use_gpu=False if args.cpu else None, limit=args.limit
     )
